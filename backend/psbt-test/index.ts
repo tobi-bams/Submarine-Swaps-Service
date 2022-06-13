@@ -1,5 +1,6 @@
 const bitcoin = require("bitcoinjs-lib");
 import { RPC } from "../utils/rpc";
+const witnessStackToScriptWitness = require("../utils/withnessStackToScriptWithness");
 
 const psbt = new bitcoin.Psbt({ network: bitcoin.networks.testnet });
 
@@ -115,9 +116,30 @@ export const testRPC = async () => {
   //   const createpsbt = await createPsbtBitcoinCore("best");
   //   console.log(createpsbt);
 
-  const createPsbt = await createPsbtBitcoinCore("any");
-  console.log(createPsbt);
-  const psbt2 = new bitcoin.Psbt({
+  console.log(sighner.result.psbt);
+
+  const psbtTry = bitcoin.Psbt.fromBase64(sighner.result.psbt, {
     network: bitcoin.networks.testnet,
   });
+  const finalizeWithness = (inputIndex: any, input: any, script: any) => {
+    const witnessStackClaimBranch = bitcoin.payments.p2wsh({
+      redeem: {
+        input: bitcoin.script.compile([1, 2]),
+        output: Buffer.from(scriptWitness, "hex"),
+      },
+    });
+
+    //   console.log(witnessStackClaimBranch.witness);
+    const witness = witnessStackToScriptWitness(
+      witnessStackClaimBranch.witness
+    );
+    return {
+      finalScriptWitness: witnessStackToScriptWitness(
+        witnessStackClaimBranch.witness
+      ),
+    };
+  };
+  psbtTry.finalizeInput(0, finalizeWithness);
+  console.log(psbtTry.toBase64());
+  const tobi = await finalizePsbt(psbtTry.toBase64());
 };
