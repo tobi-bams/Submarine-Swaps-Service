@@ -3,13 +3,27 @@ import { RPC } from "../utils/rpc";
 const witnessStackToScriptWitness = require("../utils/withnessStackToScriptWithness");
 
 const psbt = new bitcoin.Psbt({ network: bitcoin.networks.testnet });
+const getAddress = async () => {
+  try {
+    const address = await RPC("getnewaddress", []);
+    const publicKey = await RPC("getaddressinfo", [address.result]);
+    console.log(publicKey.result.pubkey);
+    return publicKey.result.pubkey;
+  } catch (error: any) {
+    console.log(error.response.data);
+  }
+};
 
-const myScript = () => {
+const myScript = async () => {
+  const pubkey = await getAddress();
   return bitcoin.script.fromASM(
     `
         OP_ADD
         03
         OP_EQUAL
+        OP_DROP
+        ${pubkey}
+        OP_CHECKSIG
         `
       .trim()
       .replace(/\s+/g, " ")
@@ -79,7 +93,7 @@ const isValidTransaction = async (hex: string) => {
 // console.log(scriptContract.toString("hex"));
 
 export const testRPC = async () => {
-  const scriptContract = myScript();
+  const scriptContract = await myScript();
   const scriptWitness = scriptContract.toString("hex");
   const p2sh = bitcoin.payments.p2sh({
     redeem: { output: scriptContract, network: bitcoin.networks.testnet },
@@ -114,7 +128,7 @@ export const testRPC = async () => {
   //   const psbtString = JSON.stringify(psbt.data);
   //   const psbtBase64 = Buffer.from(psbtString).toString("base64");
   const psbtBase64 = psbt.toBase64();
-
+  console.log(psbtBase64);
   //   const checker = await createPsbtBitcoinCore(scriptWitness);
   //   await decodePSBT(psbtBase64);
   const sighner = await PsbtSigner(psbtBase64);
@@ -128,15 +142,17 @@ export const testRPC = async () => {
   //   const createpsbt = await createPsbtBitcoinCore("best");
   //   console.log(createpsbt);
 
-  console.log(sighner.result.psbt);
+  // console.log(sighner.result.psbt);
 
   const psbtTry = bitcoin.Psbt.fromBase64(sighner.result.psbt, {
     network: bitcoin.networks.testnet,
   });
-  const finalizeWithness = (inputIndex: any, input: any, script: any) => {
+  console.log(psbtTry.toBase64());
+  const finalizeWithness = () => {
     const witnessStackClaimBranch = bitcoin.payments.p2wsh({
       redeem: {
         input: bitcoin.script.compile([
+          // psbtTry.data.inputs[0].partialSig[0].signature,
           bitcoin.opcodes.OP_2,
           bitcoin.opcodes.OP_1,
         ]),
@@ -155,7 +171,6 @@ export const testRPC = async () => {
     };
   };
   psbtTry.finalizeInput(0, finalizeWithness);
-  console.log(psbtTry.toBase64());
   const tobi = await finalizePsbt(psbtTry.toBase64());
   const verify = await isValidTransaction(tobi);
 };

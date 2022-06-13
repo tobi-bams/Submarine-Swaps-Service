@@ -22,7 +22,6 @@ export const RPC = async (method: string, parameter: any) => {
 
     return response.data;
   } catch (error: any) {
-    console.log(error.response.data);
     throw error;
   }
 };
