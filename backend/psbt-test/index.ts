@@ -60,7 +60,19 @@ const finalizePsbt = async (hex: string) => {
   try {
     const psbt = await RPC("finalizepsbt", [hex]);
     console.log(psbt);
-  } catch (error) {}
+    return psbt.result.hex;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const isValidTransaction = async (hex: string) => {
+  try {
+    const psbt = await RPC("testmempoolaccept", [[hex]]);
+    console.log(psbt);
+  } catch (error: any) {
+    console.log(error.response.data);
+  }
 };
 
 // const scriptContract = myScript();
@@ -124,7 +136,10 @@ export const testRPC = async () => {
   const finalizeWithness = (inputIndex: any, input: any, script: any) => {
     const witnessStackClaimBranch = bitcoin.payments.p2wsh({
       redeem: {
-        input: bitcoin.script.compile([1, 2]),
+        input: bitcoin.script.compile([
+          bitcoin.opcodes.OP_2,
+          bitcoin.opcodes.OP_1,
+        ]),
         output: Buffer.from(scriptWitness, "hex"),
       },
     });
@@ -142,4 +157,5 @@ export const testRPC = async () => {
   psbtTry.finalizeInput(0, finalizeWithness);
   console.log(psbtTry.toBase64());
   const tobi = await finalizePsbt(psbtTry.toBase64());
+  const verify = await isValidTransaction(tobi);
 };
