@@ -6,6 +6,7 @@ const { getPublickey, signer, Wif } = require("../service/wallet");
 const ecc = require("tiny-secp256k1");
 import { ECPairFactory, networks } from "ecpair";
 import { isValidTransaction } from "../service/verify_transaction";
+import { decodeInvoice } from "../service/parse_lightning_invoice";
 
 const wif = (async (): Promise<string> => {
   const tobi = await Wif();
@@ -148,4 +149,9 @@ export const testRPC = async () => {
   psbt.finalizeInput(0, finalizeWithness);
   const checkPsbt = psbt.extractTransaction().toHex();
   const verify = await isValidTransaction(checkPsbt);
+  console.log(
+    decodeInvoice(
+      "lntb500u1p3t4e4app5cjsgvgxjectar8pqtal72n4vepnnj4hsec96g5hr7k5s5y67grnqdqqcqzpgxqyz5vqsp5shs553vhut0qrnk9kek4cqesvjd7edkk068kp3gmdnwx33z7d3es9qyyssqe3td9j59zr0ayct45k6kfrgrvd7wuhpym5c3l3rghesffvtd6gjjgghk5v33k6fns2mtgunewgmfurcqcdmn9dutumm7zdexps9rezgqqeuws9"
+    )
+  );
 };
