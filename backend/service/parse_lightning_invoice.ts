@@ -1,11 +1,13 @@
 import bolt11 from "bolt11";
 
 interface Invoice {
-  amount: number;
-  payment_hash: string;
+  amount?: number;
+  payment_hash?: string;
   payeeNode?: string;
-  network: string;
+  network?: string;
   timestamp?: number;
+  valid: boolean;
+  timeExpireDate?: number;
 }
 
 interface Tag {
@@ -52,10 +54,12 @@ export const decodeInvoice = (invoice: string): Invoice => {
       network,
       timestamp: decodedInvoice.timestamp,
       timeExpireDate: decodedInvoice.timeExpireDate,
+      valid: true,
     };
     return formattedInvoice;
   } catch (error) {
-    console.log(error);
-    throw error;
+    // console.log(error);
+    // throw error;
+    return { valid: false };
   }
 };
