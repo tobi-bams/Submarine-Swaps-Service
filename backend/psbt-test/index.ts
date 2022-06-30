@@ -4,7 +4,7 @@ const witnessStackToScriptWitness = require("../utils/withnessStackToScriptWithn
 const network = bitcoin.networks.regtest;
 const { getPublickey, signer, Wif } = require("../service/wallet");
 const ecc = require("tiny-secp256k1");
-import { ECPairFactory, networks } from "ecpair";
+import { ECPairFactory } from "ecpair";
 import { isValidTransaction } from "../service/verify_transaction";
 import { decodeInvoice } from "../service/parse_lightning_invoice";
 
