@@ -6,7 +6,8 @@ export const RedeemScript = (
   payment_hash: string,
   timelock: number
 ) => {
-  return bitcoin.script.fromASM`
+  return bitcoin.script.fromASM(
+    `
     OP_HASH160
     ${bitcoin.crypto
       .ripemd160(Buffer.from(payment_hash, "hex"))
@@ -22,6 +23,7 @@ export const RedeemScript = (
       OP_ENDIF
       OP_CHECKSIG
     `
-    .trim()
-    .replace(/\s+/g, " ");
+      .trim()
+      .replace(/\s+/g, " ")
+  );
 };
