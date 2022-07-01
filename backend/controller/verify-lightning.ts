@@ -19,7 +19,6 @@ export const verifyLightningInvoice = async (
           networkType,
           decodedInvoice.payment_hash!
         );
-        console.log(address);
         return response(200, "Lightnign Invoice", { address });
       } catch (error: any) {
         console.log(error);
