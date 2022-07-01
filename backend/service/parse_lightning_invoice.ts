@@ -58,6 +58,7 @@ export const decodeInvoice = (invoice: string): Invoice => {
     };
     return formattedInvoice;
   } catch (error) {
+    console.log(error);
     // console.log(error);
     // throw error;
     return { valid: false };

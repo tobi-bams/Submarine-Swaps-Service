@@ -41,6 +41,13 @@ export const Wif = async (): Promise<string> => {
   return wif;
 };
 
+export const userWif = async (): Promise<string> => {
+  const mnemonic = getNewMnemonics();
+  const privateKey = await masterPrivateKey(mnemonic);
+  const wif = privateKey.toWIF();
+  return wif;
+};
+
 export const getPublickey = async (): Promise<Buffer> => {
   const mnemonic = process.env.MNEMONIC || getNewMnemonics();
   const privateKey = await masterPrivateKey(mnemonic);
