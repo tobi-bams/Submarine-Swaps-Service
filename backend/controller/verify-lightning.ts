@@ -17,7 +17,10 @@ export const verifyLightningInvoice = async (
         const networkType = SelectNetwork(network);
         const address = await GetScriptAddress(
           networkType,
-          decodedInvoice.payment_hash!
+          decodedInvoice.payment_hash!,
+          invoice,
+          decodedInvoice.amount!,
+          network
         );
         return response(200, "Lightnign Invoice", { address });
       } catch (error: any) {

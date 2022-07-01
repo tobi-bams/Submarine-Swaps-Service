@@ -2,6 +2,7 @@ import express, { Application } from "express";
 import cors from "cors";
 import { testRPC } from "./psbt-test";
 import Lightning from "./routes/lightning";
+const { sequelize } = require("./models");
 
 const app: Application = express();
 app.use(cors());
@@ -17,6 +18,12 @@ app.get("/", (req, res) => {
 
 const PORT = process.env.port || 5000;
 
-app.listen(PORT, () => {
-  console.log("Server up and running");
+app.listen(PORT, async () => {
+  try {
+    await sequelize.authenticate();
+    console.log("Database Connected Successfully");
+    console.log("Server up and running");
+  } catch (error) {
+    console.log(error);
+  }
 });
