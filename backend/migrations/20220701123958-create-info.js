@@ -48,6 +48,10 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: true,
       },
+      pre_image: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
