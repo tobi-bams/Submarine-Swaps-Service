@@ -17,6 +17,7 @@
     "typescript": "^4.7.3"
   },
   "dependencies": {
+    "@radar/lnrpc": "^0.11.1-beta.1",
     "axios": "^0.27.2",
     "bip32": "^3.0.1",
     "bip39": "^3.0.4",
@@ -28,6 +29,7 @@
     "ecpair": "^2.0.1",
     "express": "^4.18.1",
     "joi": "^17.6.0",
+    "lnd-rpc": "^0.0.8",
     "mysql2": "^2.3.3",
     "sequelize": "^6.21.2",
     "tiny-secp256k1": "^2.2.1",

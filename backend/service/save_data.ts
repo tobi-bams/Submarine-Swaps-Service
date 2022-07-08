@@ -26,3 +26,12 @@ export const saveData = async (
     throw error;
   }
 };
+
+export const updateData = async (invoice: string, pre_image: string) => {
+  try {
+    await models.info.update({ pre_image }, { where: { invoice } });
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
