@@ -17,7 +17,7 @@ app.get("/", (req, res) => {
   res.status(200).json({ msg: "Express server is running" });
 });
 
-// testRPC();
+testRPC();
 
 const PORT = process.env.port || 5000;
 
