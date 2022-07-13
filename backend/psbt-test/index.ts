@@ -1,5 +1,6 @@
 const bitcoin = require("bitcoinjs-lib");
 const { RPC } = require("../utils/rpc");
+import { getAddress } from "../utils/getAddress";
 const witnessStackToScriptWitness = require("../utils/withnessStackToScriptWithness");
 const network = bitcoin.networks.regtest;
 const { getPublickey, signer, Wif } = require("../service/wallet");
@@ -14,16 +15,16 @@ const wif = (async (): Promise<string> => {
   return tobi;
 })();
 
-const getAddress = async () => {
-  try {
-    const address = await RPC("getnewaddress", []);
-    const publicKey = await RPC("getaddressinfo", [address.result]);
-    console.log(publicKey.result.pubkey);
-    return publicKey.result.pubkey;
-  } catch (error: any) {
-    console.log(error.response.data);
-  }
-};
+// const getAddress = async () => {
+//   try {
+//     const address = await RPC("getnewaddress", []);
+//     const publicKey = await RPC("getaddressinfo", [address.result]);
+//     console.log(publicKey.result.pubkey);
+//     return publicKey.result.pubkey;
+//   } catch (error: any) {
+//     console.log(error.response.data);
+//   }
+// };
 
 const myScript = async (pubkey: Buffer) => {
   return bitcoin.script.fromASM(
@@ -103,6 +104,7 @@ export const testRPC = async () => {
   });
   console.log(p2wsh.address);
   const psbt = new bitcoin.Psbt({ network: network });
+  const value = 4000000000;
   psbt.addInput({
     hash: "6ceb7a5611541d92fbc17d1e82d7243c6ecea6c2788e68979a814cd1cac7d314",
     index: 0,
@@ -115,7 +117,7 @@ export const testRPC = async () => {
             .toString("hex"),
         "hex"
       ),
-      value: 4e9,
+      value: Number(value.toExponential()),
     },
     witnessScript: Buffer.from(scriptWitness, "hex"),
   });
