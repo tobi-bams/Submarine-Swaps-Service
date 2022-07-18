@@ -4,6 +4,9 @@ import { Wif } from "../service/wallet";
 const ecc = require("tiny-secp256k1");
 import { ECPairFactory } from "ecpair";
 import { getAddress } from "../utils/getAddress";
+import { ConvertToSat } from "../utils/convertToSat";
+const witnessStackToScriptWitness = require("../utils/withnessStackToScriptWithness");
+import { isValidTransaction } from "./verify_transaction";
 
 export const ClaimFunds = async (
   pre_image: string,
@@ -16,7 +19,9 @@ export const ClaimFunds = async (
   const wif = await Wif();
   const ServiceSignature = ECPairFactory(ecc).fromWIF(wif, network);
   const psbt = new bitcoin.Psbt({ network: network });
-  const outputValue = value - (value * 2) / 100; //temporary for now, would find a better way to calculate fees
+  const outputValue = value - (value * 0.05) / 100; //temporary for now, would find a better way to calculate fee
+  console.log(ConvertToSat(outputValue));
+  console.log(Number(ConvertToSat(value).toExponential()));
   psbt.addInput({
     hash: txid,
     index: vout,
@@ -29,14 +34,15 @@ export const ClaimFunds = async (
             .toString("hex"),
         "hex"
       ),
-      value: Number(value.toExponential()),
+      value: Number(ConvertToSat(value).toExponential()),
     },
     witnessScript: Buffer.from(scriptWitness, "hex"),
   });
   const address = await getAddress();
   psbt.addOutput({
     address: address,
-    value: Number(outputValue.toExponential()),
+    value: Number(ConvertToSat(outputValue).toExponential()),
+    // value: 9.999e8,
   });
   psbt.signInput(0, ServiceSignature);
   const finalizeWithness = () => {
@@ -57,4 +63,6 @@ export const ClaimFunds = async (
     };
   };
   psbt.finalizeInput(0, finalizeWithness);
+  const psbtHex = psbt.extractTransaction().toHex();
+  await isValidTransaction(psbtHex);
 };
