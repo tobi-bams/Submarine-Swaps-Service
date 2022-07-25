@@ -1,6 +1,5 @@
 import { Network } from "bitcoinjs-lib";
 const bitcoin = require("bitcoinjs-lib");
-import { Wif } from "../service/wallet";
 const ecc = require("tiny-secp256k1");
 import { ECPairFactory } from "ecpair";
 import { getAddress } from "../utils/getAddress";
@@ -9,8 +8,7 @@ const witnessStackToScriptWitness = require("../utils/withnessStackToScriptWithn
 import { isValidTransaction } from "./verify_transaction";
 import { GetCurrentBlockHeight } from "./getTimelock";
 
-export const ClaimFunds = async (
-  pre_image: string,
+export const Refund = async (
   network: Network,
   scriptWitness: string,
   txid: string,
@@ -18,10 +16,12 @@ export const ClaimFunds = async (
   value: number,
   private_key: string
 ) => {
-  const wif = await Wif();
+  const wif = private_key;
   const ServiceSignature = ECPairFactory(ecc).fromWIF(wif, network);
   const psbt = new bitcoin.Psbt({ network: network });
   const outputValue = value - (value * 0.05) / 100; //temporary for now, would find a better way to calculate fee
+  const timelock = await GetCurrentBlockHeight();
+
   psbt.addInput({
     hash: txid,
     index: vout,
@@ -38,6 +38,7 @@ export const ClaimFunds = async (
     },
     witnessScript: Buffer.from(scriptWitness, "hex"),
   });
+  psbt.setLocktime(timelock);
   const address = await getAddress();
   psbt.addOutput({
     address: address,
@@ -50,8 +51,8 @@ export const ClaimFunds = async (
       redeem: {
         input: bitcoin.script.compile([
           psbt.data.inputs[0].partialSig[0].signature,
-          Buffer.from(pre_image, "hex"),
-        ]),
+          Buffer.from("", "hex"),
+        ]), //Reclaim Script output
         output: Buffer.from(scriptWitness, "hex"),
       },
     });
