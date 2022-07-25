@@ -12,6 +12,7 @@ export const ClaimFundsController = async (invoice: string) => {
     "e7206d4becff7f660216a246ea4a669b3a538a6b27e2786171cdb89f0a39a33e",
     1,
     // transaction.swap_amount
-    10
+    10,
+    transaction.private_key
   );
 };

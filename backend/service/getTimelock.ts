@@ -7,3 +7,9 @@ export const GetTimelock = async (nextblocks: number) => {
   const timelock = bip65.encode({ blocks: blockheight });
   return timelock;
 };
+
+export const GetCurrentBlockHeight = async () => {
+  const currentBlockHeight = await GetBlockHeight();
+  const timelock = bip65.encode({ blocks: currentBlockHeight });
+  return timelock;
+};
