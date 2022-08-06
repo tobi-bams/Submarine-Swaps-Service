@@ -15,8 +15,8 @@ export const GetScriptAddress = async (
   networkType: string
 ): Promise<string> => {
   try {
-    const UserPrivateKey = await userWif();
-    const ServicePrivateKey = await Wif();
+    const UserPrivateKey = await userWif(network);
+    const ServicePrivateKey = await Wif(network);
     const userSigner = ECPairFactory(ecc).fromWIF(UserPrivateKey, network);
     const serviceSigner = ECPairFactory(ecc).fromWIF(
       ServicePrivateKey,
@@ -30,8 +30,8 @@ export const GetScriptAddress = async (
       timelock
     );
     const scriptWithness = script.toString("hex");
+    console.log(network);
     const p2wsh = payments.p2wsh({ redeem: { output: script, network } });
-    console.log(networkType);
     await saveData(
       invoice,
       p2wsh.address!,

@@ -1,6 +1,6 @@
 import { generateMnemonic, mnemonicToSeed } from "bip39";
 import { BIP32Interface, BIP32Factory } from "bip32";
-import { networks, payments } from "bitcoinjs-lib";
+import { Network, networks, payments } from "bitcoinjs-lib";
 import dotenv from "dotenv";
 const ecc = require("tiny-secp256k1");
 
@@ -8,13 +8,15 @@ dotenv.config();
 
 const getNewMnemonics = (): string => {
   const mnemonic = generateMnemonic(256);
-  console.log(mnemonic);
   return mnemonic;
 };
 
-const masterPrivateKey = async (mnemonic: string): Promise<BIP32Interface> => {
+const masterPrivateKey = async (
+  mnemonic: string,
+  network: Network
+): Promise<BIP32Interface> => {
   const seed = await mnemonicToSeed(mnemonic);
-  const privateKey = BIP32Factory(ecc).fromSeed(seed, networks.regtest);
+  const privateKey = BIP32Factory(ecc).fromSeed(seed, network);
   return privateKey;
 };
 
@@ -34,32 +36,32 @@ const getChildPubkey = (
   return child;
 };
 
-export const Wif = async (): Promise<string> => {
+export const Wif = async (network: Network): Promise<string> => {
   const mnemonic = process.env.MNEMONIC || getNewMnemonics();
-  const privateKey = await masterPrivateKey(mnemonic);
+  const privateKey = await masterPrivateKey(mnemonic, network);
   const wif = privateKey.toWIF();
   return wif;
 };
 
-export const userWif = async (): Promise<string> => {
+export const userWif = async (network: Network): Promise<string> => {
   const mnemonic = getNewMnemonics();
-  const privateKey = await masterPrivateKey(mnemonic);
+  const privateKey = await masterPrivateKey(mnemonic, network);
   const wif = privateKey.toWIF();
   return wif;
 };
 
-export const getPublickey = async (): Promise<Buffer> => {
-  const mnemonic = process.env.MNEMONIC || getNewMnemonics();
-  const privateKey = await masterPrivateKey(mnemonic);
-  console.log(privateKey.toWIF());
-  const xpub = getXpubkey(privateKey);
-  const pubkey = getChildPubkey(xpub, "0/0");
-  //   console.log(pubkey.toWIF());
-  return pubkey.publicKey;
-};
+// export const getPublickey = async (): Promise<Buffer> => {
+//   const mnemonic = process.env.MNEMONIC || getNewMnemonics();
+//   const privateKey = await masterPrivateKey(mnemonic);
+//   console.log(privateKey.toWIF());
+//   const xpub = getXpubkey(privateKey);
+//   const pubkey = getChildPubkey(xpub, "0/0");
+//   //   console.log(pubkey.toWIF());
+//   return pubkey.publicKey;
+// };
 
-export const signer = async (): Promise<BIP32Interface> => {
+export const signer = async (network: Network): Promise<BIP32Interface> => {
   const mnemonic = process.env.MNEMONIC || getNewMnemonics();
-  const privateKey = await masterPrivateKey(mnemonic);
+  const privateKey = await masterPrivateKey(mnemonic, network);
   return privateKey;
 };
