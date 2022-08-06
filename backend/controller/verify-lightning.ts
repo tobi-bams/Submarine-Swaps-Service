@@ -12,6 +12,11 @@ export const verifyLightningInvoice = async (
     const currentTime = new Date().getTime() / 1000;
     if (currentTime > decodedInvoice.timeExpireDate!) {
       return response(400, "Expired Invoice");
+    } else if (network !== decodedInvoice.network) {
+      return response(
+        400,
+        "Selected Network does not match that of the Invoice provided"
+      );
     } else {
       try {
         const networkType = SelectNetwork(network);
