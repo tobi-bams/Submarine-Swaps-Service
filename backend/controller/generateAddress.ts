@@ -2,6 +2,7 @@ import { decodeInvoice } from "../service/parse_lightning_invoice";
 import { response } from "../utils/response";
 import { SelectNetwork } from "../utils/network";
 import { GetScriptAddress } from "../service/getScriptAddress";
+import { SwapFee } from "../service/swap_fee";
 
 export const GenerateAddress = async (invoice: string, network: string) => {
   const decodedInvoice = decodeInvoice(invoice);
@@ -21,7 +22,7 @@ export const GenerateAddress = async (invoice: string, network: string) => {
           networkType,
           decodedInvoice.payment_hash!,
           invoice,
-          decodedInvoice.amount!,
+          decodedInvoice.amount! + SwapFee(decodedInvoice.amount!),
           network
         );
         return response(200, "Lightnign Invoice", address);

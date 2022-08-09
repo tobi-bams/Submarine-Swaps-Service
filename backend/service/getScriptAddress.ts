@@ -14,7 +14,7 @@ interface UserRefundData {
   redeem_script: string;
   refund_address: string;
   refund_fee_tokens_per_vbyte: number;
-  swap_amount: number;
+  swap_amount: string;
   refund_after: number;
   swap_created_at: string;
 }
@@ -61,7 +61,7 @@ export const GetScriptAddress = async (
       redeem_script: scriptWithness,
       refund_address: "",
       refund_fee_tokens_per_vbyte: 1,
-      swap_amount: amount,
+      swap_amount: amount.toFixed(8),
       refund_after: timelock,
       swap_created_at: savedData.createdAt,
     };
