@@ -7,6 +7,7 @@ const { sequelize } = require("./models");
 import { connectLnd } from "./utils/lightning-rpc";
 import { ClaimFundsController } from "./controller/claimFunds";
 import { RefundFundsController } from "./controller/refundToCustomer";
+import Address from "./routes/address";
 
 const app: Application = express();
 app.use(cors());
@@ -14,6 +15,7 @@ app.use(express.json());
 
 app.use("/lightning", Lightning);
 app.use("/invoice", Invoice);
+app.use("/address", Address);
 
 app.get("/", (req, res) => {
   res.status(200).json({ msg: "Express server is running" });
