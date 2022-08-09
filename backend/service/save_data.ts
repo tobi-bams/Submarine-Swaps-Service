@@ -11,7 +11,7 @@ export const saveData = async (
   status: string
 ) => {
   try {
-    await models.info.create({
+    const data = await models.info.create({
       address,
       redeem_script,
       network,
@@ -21,6 +21,7 @@ export const saveData = async (
       invoice,
       status,
     });
+    return data;
   } catch (error) {
     console.log(error);
     throw error;

@@ -24,7 +24,7 @@ export const GenerateAddress = async (invoice: string, network: string) => {
           decodedInvoice.amount!,
           network
         );
-        return response(200, "Lightnign Invoice", { address });
+        return response(200, "Lightnign Invoice", address);
       } catch (error: any) {
         console.log(error);
         return response(400, error.message);
