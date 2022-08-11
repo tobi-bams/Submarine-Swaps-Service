@@ -33,9 +33,10 @@ const getNetwork = (network: Network): string => {
   let currentNetwork: string = "";
   if (network.bech32 === "tb") {
     currentNetwork = "testnet";
-  }
-  if (network.bech32 === "bc") {
+  } else if (network.bech32 === "bc") {
     currentNetwork = "mainnet";
+  } else if (network.bech32 === "bcrt") {
+    currentNetwork = "regtest";
   }
   return currentNetwork;
 };

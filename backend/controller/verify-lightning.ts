@@ -11,24 +11,17 @@ export const verifyLightningInvoice = async (
   if (decodedInvoice.valid) {
     const currentTime = new Date().getTime() / 1000;
     if (currentTime > decodedInvoice.timeExpireDate!) {
-      return response(400, "Expired Invoice");
+      return response(400, "Expired Invoice", { valid: false });
+    } else if (network !== decodedInvoice.network) {
+      return response(
+        400,
+        "Selected Network does not match that of the Invoice provided",
+        { valid: false }
+      );
     } else {
-      try {
-        const networkType = SelectNetwork(network);
-        const address = await GetScriptAddress(
-          networkType,
-          decodedInvoice.payment_hash!,
-          invoice,
-          decodedInvoice.amount!,
-          network
-        );
-        return response(200, "Lightnign Invoice", { address });
-      } catch (error: any) {
-        console.log(error);
-        return response(400, error.message);
-      }
+      return response(200, "Lightning Invoicce is Valid", { valid: true });
     }
   } else {
-    return response(400, "Invalid Lightning Invoice");
+    return response(400, "Invalid Lightning Invoice", { valid: false });
   }
 };

@@ -4,8 +4,9 @@ export const RPC = async (method: string, parameter: any) => {
   const USER = "test";
   const PASS = "test";
   const RegTest = 18443;
+  const TestNet = 18332;
   const SigNet = 38332;
-  const RPC_URL = `http://127.0.0.1:${RegTest}/`;
+  const RPC_URL = `http://127.0.0.1:${TestNet}/`;
   const body = {
     jsonrpc: "1.0",
     id: "curltext",
