@@ -60,7 +60,7 @@ export const SwapStatus = async (address: string) => {
               addressExist.redeem_script,
               utxo.txid,
               utxo.vout,
-              utxo.value,
+              utxo.value / 100000000,
               addressExist.private_key
             );
             return response(200, "Swap paid");
