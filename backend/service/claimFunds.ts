@@ -18,7 +18,7 @@ export const ClaimFunds = async (
   value: number,
   private_key: string
 ) => {
-  const wif = await Wif();
+  const wif = await Wif(network);
   const ServiceSignature = ECPairFactory(ecc).fromWIF(wif, network);
   const psbt = new bitcoin.Psbt({ network: network });
   const outputValue = value - (value * 0.05) / 100; //temporary for now, would find a better way to calculate fee
